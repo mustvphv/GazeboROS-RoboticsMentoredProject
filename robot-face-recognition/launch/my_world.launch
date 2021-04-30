@@ -6,6 +6,14 @@
   <arg name="pause" default="false"/>
   <arg name="world" default="$(find robot-face-recognition-project)/world/empty_world.world" />
 
+
+  <!-- <param name="robot_description" command="$(find xacro)/xacro - -inorder '$(find m2wr_description)/urdf/m2wr.xacro'" />
+
+IL FAUT ENLEVER L'ESPACE ENTRE LES DEUX TIRETS - - AVANT inorder
+-->
+
+  <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find robot-face-recognition-project)/the_robot_description/urdf/model.xacro'" />
+
   <arg name="x" default="-3.0"/>
   <arg name="y" default="1.0"/>
   <arg name="z" default="0.0"/>
@@ -18,5 +26,13 @@
     <arg name="use_sim_time" value="true"/>
   </include>
 
+
+  <!-- <node name="mybot_spawn" pkg="gazebo_ros" type="spawn_model" output="screen" 
+    args="-urdf -param robot_description -model m2wr -x $(arg x) -y $(arg y) -z $(arg z)" /> -->
+
+  <rosparam file="$(find robot-face-recognition-project)/config/my_diff_drive.yaml" command="load" />
+
+  <node name="mybot_spawn" pkg="gazebo_ros" type="spawn_model" output="screen" 
+    args="-urdf -param robot_description -model the_robot -x $(arg x) -y $(arg y) -z $(arg z)" />
 
 </launch>
