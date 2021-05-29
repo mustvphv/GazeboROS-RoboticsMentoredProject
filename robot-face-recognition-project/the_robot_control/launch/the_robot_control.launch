@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<launch>
+
+
+  <!-- <rosparam file="$(find robot-face-recognition-project)/config/my_diff_drive.yaml" command="load" /> --> <!-- ns="the_robot"-->
+
+  <!-- Load joint controller configurations from YAML file to parameter server -->
+  <rosparam file="$(find robot-face-recognition-project)/config/the_robot_control.yaml" command="load"/>
+
+  <!-- load the controllers -->
+  <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" 
+	output="screen" args="joint_state_controller
+					  the_robot__palm_left_finger_position_controller
+					  the_robot__left_finger_tip_joint_position_controller
+                                          the_robot__palm_right_finger_position_controller
+                                          the_robot__right_finger_tip_joint_position_controller
+                                          the_robot__palm_riser_position_controller"/>
+                                          <!--mobile_base_controller"/-->
+
+
+  <!--<node name="Acontroller_manager" pkg="controller_manager" type="spawner"
+          respawn="false" output="screen" args="mobile_base_controller" />-->
+
+
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"
+	respawn="false" output="screen">
+    <remap from="/joint_states" to="/the_robot/joint_states" />
+  </node>
+
+  <!--<remap from="odom" to="odometry/filtered" />-->
+
+  
+
+</launch>

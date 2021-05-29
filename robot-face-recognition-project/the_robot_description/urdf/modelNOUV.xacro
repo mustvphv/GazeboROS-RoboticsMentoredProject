@@ -1,0 +1,578 @@
+<?xml version="1.0" ?>
+<robot name="the_robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- <xacro:include filename="$(find robot-face-recognition-project)/the_robot_description/urdf/model_mobile_base.xacro"/> -->
+
+  <xacro:include filename="$(find robot-face-recognition-project)/the_robot_description/urdf/model.gazebo"/>
+  <xacro:include filename="$(find robot-face-recognition-project)/the_robot_description/urdf/materials.xacro" />
+
+ <xacro:property name="the_robot__camera_link" value="0.05" /> <!-- Size of square 'camera' box -->
+
+  <joint name="the_robot__left_wheel_hinge" type="continuous"><!--changement, avant c'etait "fixed" au lieu de "revolute"-->
+    <parent link="the_robot__chassis"/>
+    <child link="the_robot__left_wheel"/>
+    <origin rpy="0     1.5707 1.5707" xyz="0.79999 0.56999 0.12499"/>
+    <!--<origin rpy="0     1.5707 1.5707" xyz="0.0 0.56999 0.12499"/>-->
+    <axis xyz="9.e-05 9.e-05 1.e+00"/>
+    <!--<axis xyz="0.0 0.0 0.0"/>-->
+    <limit effort="0.0" lower="0.0" upper="0.0" velocity="0.0"/>
+    <!--<limit effort="300" lower="-0.5" upper="0.5" velocity="12"/>-->
+  </joint>
+
+
+  <joint name="the_robot__left_wheel_rear_hinge" type="continuous"><!--changement, avant c'etait "fixed" au lieu de "revolute"-->
+    <parent link="the_robot__chassis"/>
+    <child link="the_robot__left_wheel_rear"/>
+    <!--<origin rpy="0     1.5707 1.5707" xyz="0.79999 0.56999 0.12499"/>-->
+    <origin rpy="0     1.5707 1.5707" xyz="-0.79999 0.56999 0.12499"/>
+    <axis xyz="9.e-05 9.e-05 1.e+00"/>
+    <!--<axis xyz="0.0 0.0 0.0"/>-->
+    <limit effort="0.0" lower="0.0" upper="0.0" velocity="0.0"/>
+    <!--<limit effort="300" lower="-0.5" upper="0.5" velocity="12"/>-->
+  </joint>
+
+
+
+<!--<transmission name="left_wheel_transmission">
+  <type>transmission_interface/SimpleTransmission</type>
+  <joint name="the_robot__left_wheel_hinge">
+    <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+  </joint>
+  <actuator name="left_wheel_actuator">
+    <mechanicalReduction>7</mechanicalReduction>
+    <hardwareInterface>VelocityJointInterface</hardwareInterface>
+  </actuator>
+</transmission>-->
+
+ <!--<transmission name="tranANC">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="the_robot__left_wheel_hinge">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="motorANC">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>-->
+
+  <joint name="the_robot__right_wheel_hinge" type="continuous"><!--changement, avant c'etait "fixed au lieu de "revolute"-->
+    <parent link="the_robot__chassis"/>
+    <child link="the_robot__right_wheel"/>
+    <origin rpy="0     1.5707 1.5707" xyz="0.8     -0.56999  0.125"/>
+    <!--<origin rpy="0     1.5707 1.5707" xyz="0.0     -0.56999  0.125"/>-->
+    <axis xyz="9.e-05 9.e-05 1.e+00"/>
+    <!--<axis xyz="0.0 0.0 0.0"/>-->
+    <limit effort="0.0" lower="0.0" upper="0.0" velocity="0.0"/>
+  </joint>
+
+
+  <joint name="the_robot__right_wheel_rear_hinge" type="continuous"><!--changement, avant c'etait "fixed au lieu de "revolute"-->
+    <parent link="the_robot__chassis"/>
+    <child link="the_robot__right_wheel_rear"/>
+    <!--<origin rpy="0     1.5707 1.5707" xyz="0.8     -0.56999  0.125"/>-->
+    <origin rpy="0     1.5707 1.5707" xyz="-0.8     -0.56999  0.125"/>
+    <axis xyz="9.e-05 9.e-05 1.e+00"/>
+    <!--<axis xyz="0.0 0.0 0.0"/>-->
+    <limit effort="0.0" lower="0.0" upper="0.0" velocity="0.0"/>
+  </joint>
+
+
+<!--<transmission name="right_wheel_transmission">
+  <type>transmission_interface/SimpleTransmission</type>
+  <joint name="the_robot__right_wheel_hinge">
+    <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>  
+  </joint>
+  <actuator name="right_wheel_actuator">
+    <mechanicalReduction>7</mechanicalReduction>
+    <hardwareInterface>VelocityJointInterface</hardwareInterface>
+  </actuator>
+</transmission>-->
+
+  <!--<joint name="the_robot__riser_hinge" type="continuous">
+    <parent link="the_robot__chassis"/>
+    <child link="the_robot__riser"/>
+    <origin rpy="0 0 0" xyz="2.04999 0      0.47"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="0.0" lower="-0.8" upper="0.8" velocity="0.0"/>
+  </joint>
+
+  <joint name="the_robot__chassis-riser_joint" type="fixed">
+    <parent link="the_robot__chassis"/>
+    <child link="the_robot__riser"/>
+    <origin rpy="0 0 0" xyz="2.04999 0      0.47"/>
+    <axis xyz="0 1 0"/>
+    <!-<limit effort="0.0" lower="-0.8" upper="0.8" velocity="0.0"/>->
+    <!-<origin rpy="0 0 0" xyz="1.02499 0      0.5"/>
+    <axis xyz="0 0 0"/>
+    <limit effort="0" lower="0" upper="0" velocity="0"/>->
+  </joint>-->
+
+  <joint name="the_robot__palm_left_finger" type="continuous">
+    <parent link="the_robot__palm"/>
+    <child link="the_robot__left_finger"/>
+    <origin rpy="0       0      -0.78539" xyz="0.1 0.2 0"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="1000.0" lower="-0.8" upper="0.8" velocity="1000.0"/>
+  </joint>
+  <transmission name="the_robot__palm_left_finger_tran">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="the_robot__palm_left_finger">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="the_robot__palm_left_finger_motor">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+  <joint name="the_robot__left_finger_tip_joint" type="revolute">
+    <parent link="the_robot__left_finger"/>
+    <child link="the_robot__left_finger_tip"/>
+    <origin rpy="0      0      2.35609" xyz="0.09616 0.23758 0"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="1000.0" lower="-0.8" upper="0.8" velocity="1000.0"/>
+  </joint>
+  <transmission name="the_robot__left_finger_tip_joint_tran">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="the_robot__left_finger_tip_joint">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="the_robot__left_finger_tip_joint_motor">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+  <joint name="the_robot__palm_right_finger" type="revolute">
+    <parent link="the_robot__palm"/>
+    <child link="the_robot__right_finger"/>
+    <origin rpy="0      0      0.78539" xyz="0.1 -0.2  0"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="1000.0" lower="-0.8" upper="0.8" velocity="1000.0"/>
+  </joint>
+  <transmission name="the_robot__palm_right_finger_tran">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="the_robot__palm_right_finger">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="the_robot__palm_right_finger_motor">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+  <joint name="the_robot__right_finger_tip_joint" type="revolute">
+    <parent link="the_robot__right_finger"/>
+    <child link="the_robot__right_finger_tip"/>
+    <origin rpy="0      0      0.78531" xyz="0.09616 -0.23758  0"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="1000.0" lower="-0.8" upper="0.8" velocity="1000.0"/>
+  </joint>
+  <transmission name="the_robot__right_finger_tip_joint_tran">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="the_robot__right_finger_tip_joint">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="the_robot__right_finger_tip_joint_motor">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+  <joint name="the_robot__palm_riser" type="prismatic">
+    <parent link="the_robot__riser"/>
+    <child link="the_robot__palm"/>
+    <origin rpy="0 0 0" xyz="0  0   -0.4"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="1000.0" lower="0.0" upper="0.9" velocity="1000.0"/>
+  </joint>
+  <transmission name="the_robot__palm_riser_tran">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="the_robot__palm_riser">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="the_robot__palm_riser_motor">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+
+    <gripper name="simple_gripper">
+      <grasp_check>
+        <detach_steps>40</detach_steps>
+        <attach_steps>20</attach_steps>
+        <min_contact_count>2</min_contact_count>
+      </grasp_check>
+      <gripper_link>the_robot__right_finger</gripper_link>
+      <gripper_link>the_robot__right_finger_tip</gripper_link>
+      <gripper_link>the_robot__left_finger</gripper_link>
+      <gripper_link>the_robot__left_finger_tip</gripper_link>
+      <palm_link>the_robot__palm</palm_link>
+    </gripper>
+  <joint name="the_robot__camera_joint" type="fixed">
+    <parent link="the_robot__riser"/>
+    <child link="the_robot__camera_link"/>
+    <origin rpy="0 0 0" xyz="-0.08  0     0.60"/>
+    <axis xyz="0 0 0"/>
+    <limit effort="0" lower="0" upper="0" velocity="0"/>
+  </joint>
+  <joint name="the_robot__arm_gripper_joint" type="fixed">
+    <parent link="the_robot__chassis"/>
+    <child link="the_robot__riser"/>
+    <origin rpy="0 0 0" xyz="1.02499 0      0.5"/>
+    <!--<origin rpy="0 0 0" xyz="0.25 0 0.5"/>-->
+    <axis xyz="0 0 0"/>
+    <limit effort="0" lower="0" upper="0" velocity="0"/>
+  </joint>
+  <joint name="the_robot__hokuyo_joint" type="fixed">
+    <parent link="the_robot__palm"/>
+    <child link="the_robot__hokuyo_link"/>
+    <origin rpy="0 0 0" xyz="0  0    0.2"/>
+    <axis xyz="0 0 0"/>
+    <limit effort="0" lower="0" upper="0" velocity="0"/>
+  </joint>
+  <link name="the_robot__chassis">
+    <inertial>
+      <mass value="1.0"/>
+      <origin rpy="0 0 0" xyz="-0.1  0  -0.1"/>
+      <inertia ixx="0.5" ixy="0" ixz="0" iyy="1.0" iyz="0" izz="0.1"/>
+    </inertial>
+    <collision name="the_robot__collision">
+      <!--<origin rpy="0 0 0" xyz="0   0   0.25"/>-->
+      <origin rpy="0 0 0" xyz="-0.2   0   0.25"/>
+      <geometry>
+        <box size="2 1 0.3"/>
+        <!--<box size="0.5 1 0.3"/>-->
+      </geometry>
+    </collision>
+      <!--<origin rpy="0 0 0" xyz="-0.8    0     0.125"/>-->
+    <!--<collision name="the_robot__caster_collision">
+      <origin rpy="0 0 0" xyz="-1    0     0.125"/>
+      <geometry>
+        <sphere radius=".125"/>
+      </geometry>
+    </collision>-->
+    <visual name="the_robot__visual1">
+      <origin rpy="0 0 0" xyz="-0.2   0   0.25"/>
+      <geometry>
+        <box size="2 1 0.3"/>
+      </geometry>
+    </visual>
+    <!--<visual name="the_robot__caster_visual">
+      <origin rpy="0 0 0" xyz="-1    0     0.125"/>
+      <geometry>
+        <sphere radius=".125"/>
+      </geometry>
+    </visual>-->
+  </link>
+  <link name="the_robot__left_wheel">
+    <inertial>
+      <mass value="0.5"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0"/>
+    </inertial>
+    <collision name="the_robot__collision">
+      <origin rpy="0 0 0" xyz="0   0   0.03"/>
+      <geometry>
+        <cylinder length=".05" radius=".125"/>
+      </geometry>
+    </collision>
+    <visual name="the_robot__visual2">
+      <origin rpy="0 0 0" xyz="0   0   0.03"/>
+      <geometry>
+        <cylinder length=".05" radius=".125"/>
+      </geometry>
+    </visual>
+  </link>
+  <link name="the_robot__left_wheel_rear">
+    <inertial>
+      <mass value="0.5"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0"/>
+    </inertial>
+    <collision name="the_robot__collision">
+      <origin rpy="0 0 0" xyz="0   0   0.03"/>
+      <geometry>
+        <cylinder length=".05" radius=".125"/>
+      </geometry>
+    </collision>
+    <visual name="the_robot__visual22">
+      <origin rpy="0 0 0" xyz="0   0   0.03"/>
+      <geometry>
+        <cylinder length=".05" radius=".125"/>
+      </geometry>
+    </visual>
+  </link>
+
+
+  <link name="the_robot__right_wheel">
+    <inertial>
+      <mass value="0.5"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0"/>
+    </inertial>
+    <collision name="the_robot__collision">
+      <origin rpy="0 0 0" xyz="0    0   -0.03"/>
+      <geometry>
+        <cylinder length=".05" radius=".125"/>
+      </geometry>
+    </collision>
+    <visual name="the_robot__visual3">
+      <origin rpy="0 0 0" xyz="0    0   -0.03"/>
+      <geometry>
+        <cylinder length=".05" radius=".125"/>
+      </geometry>
+    </visual>
+  </link>
+  <link name="the_robot__right_wheel_rear">
+    <inertial>
+      <mass value="0.5"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0"/>
+    </inertial>
+    <collision name="the_robot__collision">
+      <origin rpy="0 0 0" xyz="0    0   -0.03"/>
+      <geometry>
+        <cylinder length=".05" radius=".125"/>
+      </geometry>
+    </collision>
+    <visual name="the_robot__visual33">
+      <origin rpy="0 0 0" xyz="0    0   -0.03"/>
+      <geometry>
+        <cylinder length=".05" radius=".125"/>
+      </geometry>
+    </visual>
+  </link>
+
+
+  <link name="the_robot__riser">
+    <inertial>
+      <mass value="0.2"/> <!--AJOUT POUR VOIR LE RISER DANS GAZEBO -->
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0"/>
+    </inertial>
+    <collision name="the_robot__collision">
+      <origin rpy="0 0 0" xyz="-0.125 0 0.05"/>
+      <!--<origin rpy="0 0 0" xyz="-0.975 0 0.05"/>-->
+      <geometry>
+        <box size="0.2 0.2 1.0"/>
+      </geometry>
+    </collision>
+    <visual name="the_robot__visual4">
+      <origin rpy="0 0 0" xyz="-0.125 0 0.05"/>
+      <!--<origin rpy="0 0 0" xyz="-0.975 0 0.05"/>-->
+      <geometry>
+        <box size="0.2 0.2 1.0"/>
+      </geometry>
+    </visual>
+  </link>
+  <link name="the_robot__palm">
+    <!--<pose>1.175 0.0 0.1 0 0 0</pose>-->
+    <inertial>
+      <mass value="0.2"/>
+      <!--<origin rpy="0 0 0" xyz="0 0 0"/>-->
+      <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0"/>
+    </inertial>
+    <collision name="the_robot__collision">
+      <!--<origin rpy="0 0 0" xyz="-0.12 0 0.05"/>-->
+      <geometry>
+        <box size="0.1 0.2 0.1"/>
+      </geometry>
+    </collision>
+    <visual name="the_robot__visual5">
+      <!--<origin rpy="0 0 0" xyz="-0.12 0 0.05"/>-->
+      <!--<origin rpy="0 0 0" xyz="0 0 0"/>-->
+      <geometry>
+        <box size="0.1 0.2 0.1"/>
+      </geometry>
+    </visual>
+  </link>
+  <link name="the_robot__left_finger">
+    <inertial>
+      <mass value="0.1"/>
+      <!--<origin rpy="0 0 0" xyz="0 0 0"/>-->
+      <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0"/>
+    </inertial>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.1</mu>
+              <mu2>0</mu2>
+            </ode>
+          </friction>
+          <contact>
+            <ode>
+              <max_vel>0.0</max_vel>
+            </ode>
+          </contact>
+        </surface>
+    <collision name="the_robot__collision">
+      <!--<origin rpy="0 0 0" xyz="0.5 -0.8 0.05"/>-->
+      <geometry>
+        <box size="0.1 0.3 0.1"/>
+      </geometry>
+    </collision>
+    <visual name="the_robot__visual6">
+      <!--<origin rpy="0 0 0" xyz="0.5 -0.8 0.05"/>-->
+      <!--<origin rpy="0 0 0" xyz="0 0 0"/>-->
+      <geometry>
+        <box size="0.1 0.3 0.1"/>
+      </geometry>
+    </visual>
+  </link>
+  <link name="the_robot__left_finger_tip">
+    <inertial>
+      <mass value="0.1"/>
+      <!--<origin rpy="0 0 0" xyz="0 0 0"/>-->
+      <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0"/>
+    </inertial>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.1</mu>
+              <mu2>0</mu2>
+            </ode>
+          </friction>
+          <contact>
+            <ode>
+              <max_vel>0.0</max_vel>
+            </ode>
+          </contact>
+        </surface>
+    <collision name="the_robot__collision">
+      <!--<origin rpy="0 0 0" xyz="0.5 1.15 0"/>-->
+      <geometry>
+        <box size="0.1 0.4 0.1"/>
+      </geometry>
+    </collision>
+    <visual name="the_robot__visual7">
+      <!--<origin rpy="0 0 0" xyz="0.5 1.15 0"/>-->
+      <!--<origin rpy="0 0 0" xyz="0 0 0"/>-->
+      <geometry>
+        <box size="0.1 0.4 0.1"/>
+      </geometry>
+    </visual>
+  </link>
+  <link name="the_robot__right_finger">
+    <inertial>
+      <mass value="0.1"/>
+      <!--<origin rpy="0 0 0" xyz="0 0 0"/>-->
+      <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0"/>
+    </inertial>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.1</mu>
+              <mu2>0</mu2>
+            </ode>
+          </friction>
+          <contact>
+            <ode>
+              <max_vel>0.0</max_vel>
+            </ode>
+          </contact>
+        </surface>
+    <collision name="the_robot__collision">
+      <!--<origin rpy="0 0 0" xyz="-0.8 0.8 0"/>-->
+      <geometry>
+        <box size="0.1 0.3 0.1"/>
+      </geometry>
+    </collision>
+    <visual name="the_robot__visual8">
+      <!--<origin rpy="0 0 0" xyz="-0.8 0.8 0"/>-->
+      <geometry>
+        <box size="0.1 0.3 0.1"/>
+      </geometry>
+    </visual>
+  </link>
+  <link name="the_robot__right_finger_tip">
+    <inertial>
+      <mass value="0.1"/>
+      <!--<origin rpy="0 0 0" xyz="0 0 0"/>-->
+      <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0"/>
+    </inertial>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.1</mu>
+              <mu2>0</mu2>
+            </ode>
+          </friction>
+          <contact>
+            <ode>
+              <max_vel>0.0</max_vel>
+            </ode>
+          </contact>
+        </surface>
+    <collision name="the_robot__collision">
+      <!--<origin rpy="0 0 0" xyz="0 1.15 0"/>-->
+      <geometry>
+        <!--<box size="0.1 0.2 0.1"/>-->
+        <box size="0.1 0.4 0.1"/>
+      </geometry>
+    </collision>
+    <visual name="the_robot__visual9">
+      <!--<origin rpy="0 0 0" xyz="0 1.15 0"/>-->
+      <geometry>
+        <!--<box size="0.1 0.2 0.1"/>-->
+        <box size="0.1 0.4 0.1"/>
+      </geometry>
+    </visual>
+  </link>
+  <!--<link name="the_robot__right_finger_tip_extension">
+    <inertial>
+      <mass value="0.1"/>
+      <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0"/>
+    </inertial>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.1</mu>
+              <mu2>0</mu2>
+            </ode>
+          </friction>
+          <contact>
+            <ode>
+              <max_vel>0.0</max_vel>
+            </ode>
+          </contact>
+        </surface>
+    <collision name="the_robot__collision">
+      <geometry>
+        <box size="0.1 0.2 0.1"/>
+      </geometry>
+    </collision>
+    <visual name="the_robot__visual10">
+      <geometry>
+        <box size="0.1 0.2 0.1"/>
+      </geometry>
+    </visual>
+  </link>-->
+  <link name="the_robot__camera_link">
+    <inertial>
+      <mass value="0"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0"/>
+    </inertial>
+    <collision name="the_robot__collision">
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <box size="0.1 0.1 0.1"/>
+      </geometry>
+    </collision>
+    <visual name="the_robot__visual10">
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <box size="0.1 0.1 0.1"/>
+      </geometry>
+    </visual>
+  </link>
+  <link name="the_robot__hokuyo_link">
+    <inertial>
+      <mass value="0"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0"/>
+    </inertial>
+  </link>
+</robot>
