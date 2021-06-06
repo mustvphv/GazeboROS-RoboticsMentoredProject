@@ -39,12 +39,64 @@ global else_active
 
 deploiementDuGripperEnModeChasse = 0
 
+premier_deploiement = 0
+change_velocity = 0
 
 x = 0.0
 y = 0.0 
 theta = 0.0
 
+face_recognition_result = "none"
 
+valeurParRapportAuScan = 0
+
+
+def launchGripperDeploymentOrNot(result):
+
+    global subFaceRecognition
+
+    subFaceRecognition.unregister();
+
+    if result == 0:
+        deploiementDuGripperEnModeChasse()
+
+
+def face_recognition_callback(msg):
+    global subFaceRecognition
+    global face_recognition_result
+
+
+    bridge = CvBridge()
+    print("Step: Face recognition callback")
+    try:
+        # Convert your ROS Image message to OpenCV2
+        cv2_img = bridge.imgmsg_to_cv2(msg, "bgr8")
+    except CvBridgeError, e:
+        print(e)
+    else:
+        # Save your OpenCV2 image as a jpeg
+        try:
+            os.remove('/home/ilyes/projet_ws/src/lancement_du_robot/src/image_visage_detection/camera_image_detection.jpeg')
+        except: pass
+
+        
+        cv2.imwrite('/home/ilyes/projet_ws/src/lancement_du_robot/src/image_visage_detection/camera_image_detection.jpeg', cv2_img)
+
+        
+        
+        image = cv2.imread('/home/ilyes/projet_ws/src/lancement_du_robot/src/image_visage_detection/camera_image_detection.jpeg', cv2.IMREAD_COLOR)
+
+
+
+        vel_msg = Twist();
+
+
+        result = os.system("/usr/bin/python3 /home/ilyes/projet_tutore_ws/src/lancement_du_robot/src/src_code_detection_visages/cnn-starwars-master/cnn_starwars.py /home/ilyes/projet_ws/src/lancement_du_robot/src/image_visage_detection/camera_image_detection.jpeg")
+
+        launchGripperDeploymentOrNot(result)
+
+
+        #rospy.signal_shutdown("fin detection visage")
 
 
 def image_callback(msg):
@@ -53,6 +105,8 @@ def image_callback(msg):
     global couleur_bleue_trouvee
 
     global else_active
+
+    global premier_deploiement
 
     bridge = CvBridge()
 
@@ -102,7 +156,7 @@ def image_callback(msg):
 
 
         print("couleur_bleue_trouvee", couleur_bleue_trouvee)
-        if len(cnts) > 0 and couleur_bleue_trouvee == 0:
+        if len(cnts) > 0 and couleur_bleue_trouvee == 0 and premier_deploiement == 0:
             c = max(cnts, key=cv2.contourArea)
             ((x, y), radius) = cv2.minEnclosingCircle(c)
             M = cv2.moments(c)
@@ -204,80 +258,108 @@ def image_callback(msg):
 
 
 def take_action(regions):
+    global premier_deploiement
     global shutdown_var
     global deploiementDuGripperEnModeChasse
+    global change_velocity
+    global subFaceRecognition
+    global face_recognition_result
+
+    global subImage
+    global subLaser
 
     msg = Twist()
     linear_x = 0
     angular_z = 0
-    change_velocity = 0
+    #change_velocity = 0
 
     velocity_publisher = rospy.Publisher('/the_robot/cmd_vel', Twist, queue_size=10)
 
     state_description = ''
 
-    if regions['front'] > 1 and regions['fleft'] > 1 and regions['fright'] > 1:
+    if regions['front'] > 1 and regions['fleft'] > 1 and regions['fright'] > 1 and change_velocity == 0:
         state_description = 'case 1 - nothing'
         print("DANS LE CAS 1")
         #linear_x = 0.6
         #angular_z = 0
         #print("msg_t.ranges[360]=", msg_t.ranges[360])
 
-    elif regions['front'] < 1 and regions['fleft'] > 1 and regions['fright'] > 1:
+    elif regions['front'] < 1 and regions['fleft'] > 1 and regions['fright'] > 1 and change_velocity == 0:
         state_description = 'case 2 - front'
         print("DANS LE CAS 2")
-        #linear_x = 0
-        #angular_z = -0.3
-
-    elif regions['front'] > 1 and regions['fleft'] > 1 and regions['fright'] < 1:
+        linear_x = 0
+        angular_z = -0.3
+        change_velocity = 1
+        if premier_deploiement == 0:
+            premier_deploiement = 1
+    elif regions['front'] > 1 and regions['fleft'] > 1 and regions['fright'] < 1 and change_velocity == 0:
         state_description = 'case 3 - fright'
         print("DANS LE CAS 3")
         #linear_x = 0
         #angular_z = -0.3
-
-    elif regions['front'] > 1 and regions['fleft'] < 2 and regions['fright'] > 2:
+        change_velocity = 1
+        if premier_deploiement == 0:
+            premier_deploiement = 1
+    elif regions['front'] > 1 and regions['fleft'] < 2 and regions['fright'] > 2 and change_velocity == 0:
         state_description = 'case 4 - fleft'
         print("DANS LE CAS 4")
         linear_x = 0
         angular_z = 0.3
         change_velocity = 1
+        if premier_deploiement == 0:
+            premier_deploiement = 1
 
-    elif regions['front'] < 1 and regions['fleft'] > 1 and regions['fright'] < 1:
+    elif regions['front'] < 1 and regions['fleft'] > 1 and regions['fright'] < 1 and change_velocity == 0:
         state_description = 'case 5 - front and fright'
         print("DANS LE CAS 5")
         #linear_x = 0
         #angular_z = -0.3
+        change_velocity = 1
+        if premier_deploiement == 0:
+            premier_deploiement = 1
 
-    elif regions['front'] < 1 and regions['fleft'] < 1 and regions['fright'] > 1:
+    elif regions['front'] < 3 and regions['fleft'] < 3 and regions['fright'] > 1 and change_velocity == 0:
         state_description = 'case 6 - front and fleft'
         print("DANS LE CAS 6")
-        #linear_x = 0
-        #angular_z = 0.3
-
-    elif regions['front'] < 1 and regions['fleft'] < 1 and regions['fright'] < 1:
+        linear_x = 0
+        angular_z = 0.3
+        change_velocity = 1
+        if premier_deploiement == 0:
+            premier_deploiement = 1
+    elif regions['front'] < 3 and regions['fleft'] < 3 and regions['fright'] < 3 and change_velocity == 0:
         state_description = 'case 7 - front and fleft and fright'
         print("DANS LE CAS 7")
-        #shutdown_var = 1
-        #rospy.shu
         linear_x = 0
         angular_z = 0
         change_velocity = 1
-    elif regions['front'] > 1 and regions['fleft'] < 1 and regions['fright'] < 1:
+        if premier_deploiement == 0:
+            premier_deploiement = 1
+    elif regions['front'] > 1 and regions['fleft'] < 3 and regions['fright'] < 3 and change_velocity == 0:
         state_description = 'case 8 - fleft and fright'
         print("DANS LE CAS 8")
-        #shutdown_var = 1
-        #linear_x = 0
-        #angular_z = 0
+        linear_x = 0
+        angular_z = 0
         change_velocity = 1
+        if premier_deploiement == 0:
+            premier_deploiement = 1
+    """
     else:
         state_description = 'unknown case'
         rospy.loginfo(regions)
+    """
 
     if change_velocity == 1:
-        msg.linear.x = linear_x
-        msg.angular.z = angular_z
+        msg.linear.x = 0.0 #linear_x
+        msg.angular.z = 0.0 #angular_z
         velocity_publisher.publish(msg)
-        deploiementDuGripperEnModeChasse = 1
+        subImage.unregister();
+        subLaser.unregister();
+        subFaceRecognition = rospy.Subscriber('/the_robot_camera/camera1/image_raw', Image, face_recognition_callback)
+        #deploiementDuGripperEnModeChasse()
+
+        
+
+        #deploiementDuGripperEnModeChasse = 1
         #change_velocity = 0
 
 
@@ -294,6 +376,29 @@ def clbk_laser(msg):
     }
 
     take_action(regions)
+
+
+def laserDeploiementPalmRiser_callback(msg):
+    global valeurParRapportAuScan
+
+
+    regions = {
+        'right':  min(min(msg.ranges[0:143]), 10),
+        'fright': min(min(msg.ranges[144:287]), 10),
+        'front':  min(min(msg.ranges[288:431]), 10),
+        'fleft':  min(min(msg.ranges[432:575]), 10),
+        'left':   min(min(msg.ranges[576:713]), 10),
+    }
+
+    #take_action(regions)
+
+    print("MSG=", min(min(msg.ranges[288:431]), 10))
+
+    valeurParRapportAuScan = min(min(msg.ranges[288:431]), 10)
+
+    if regions['front'] > 1:
+        print("FROOONT")
+        
 
 
 
@@ -373,22 +478,76 @@ def avancer_devant():
         r.sleep()  
 
 
+def avancerVersLaCible():
+    pub = rospy.Publisher("/the_robot/cmd_vel", Twist, queue_size = 1)
+
+    speed = Twist()
+
+    speed.linear.x = 0.3
+    speed.angular.z = 0.0
+
+    pub.publish(speed)
 
 def deploiementDuGripperEnModeChasse():
+    global valeurParRapportAuScan
+    #global premiereValeurParRapportAuScan
+
+
     gripper_left_finger_publisher = rospy.Publisher('/the_robot__palm_left_finger_position_controller/command', Float64, queue_size=10)
     gripper_left_finger_tip_publisher = rospy.Publisher('/the_robot__left_finger_tip_joint_position_controller/command', Float64, queue_size=10)
     gripper_right_finger_publisher = rospy.Publisher('/the_robot__palm_right_finger_position_controller/command', Float64, queue_size=10)
     gripper_right_finger_tip_publisher = rospy.Publisher('/the_robot__right_finger_tip_joint_position_controller/command', Float64, queue_size=10)
     gripper_palm_riser_pusblisher = rospy.Publisher('/the_robot__palm_riser_position_controller/command', Float64, queue_size=10)
 
+    velocity_pub = rospy.Publisher("/the_robot/cmd_vel", Twist, queue_size = 1)
 
     rate = rospy.Rate(10) # 10hz
     end_loop = 0
     i = 0;
+
+    
+    subLaserDeploiementPalmRiser = rospy.Subscriber('/the_robot/laser_scan', LaserScan, laserDeploiementPalmRiser_callback)
+
+    premiereValeurParRapportAuScan = valeurParRapportAuScan
+
+    print('FIRSTpremiereValeurParRapportAuScan=', premiereValeurParRapportAuScan)
+    print('FIRSTvaleurParRapportAuScan=', valeurParRapportAuScan)
+
+    i_riser = 0.0;
+    i_riser_end = 0.0;
+    objetSurLaTableDetecte = 0
+    
+    while i_riser < 1.0 and i_riser_end < 0.29: #i_riser < 0.60: #0.27 correpond a peu pres a la distance entre le laser et la palm
+        if i_riser == 0.05:
+            premiereValeurParRapportAuScan = valeurParRapportAuScan;
+
+        if valeurParRapportAuScan > premiereValeurParRapportAuScan + 0.1 and i_riser >= 0.05:
+            objetSurLaTableDetecte = 1
+            
+
+        msg_data_palm_riser = i_riser
+        gripper_palm_riser_pusblisher.publish(msg_data_palm_riser)
+        rate.sleep()
+        i_riser += 0.05
+
+        if objetSurLaTableDetecte == 1:
+            i_riser_end += 0.05;
+            
+            #if i_riser_end >= 0.2:
+                #break;
+
+
+        #if premiereValeurParRapportAuScan < :
+        print('premiereValeurParRapportAuScan=', premiereValeurParRapportAuScan)
+        print('valeurParRapportAuScan=', valeurParRapportAuScan)
+
+        
+    subLaserDeploiementPalmRiser.unregister()
+
+
     while i < 0.8:
       msg_data_palm_riser = 5.0
       msg_data_left_finger = i;
-      gripper_palm_riser_pusblisher.publish(msg_data_palm_riser)
       gripper_left_finger_publisher.publish(msg_data_left_finger)
       gripper_left_finger_tip_publisher.publish(msg_data_left_finger)
       gripper_right_finger_publisher.publish(-msg_data_left_finger)
@@ -397,6 +556,56 @@ def deploiementDuGripperEnModeChasse():
       rate.sleep()
       i += 0.01
       end_loop += 1
+
+
+    speed = Twist()
+    i_vel = 0
+    while i_vel < 0.30:
+      speed.linear.x = i_vel #0.0
+      speed.angular.z = 0.0 #-i_vel
+
+      velocity_pub.publish(speed)
+
+      rate.sleep()
+      i_vel += 0.01
+
+    print("freinage")
+
+    speed.linear.x = 0.0
+    speed.angular.z = 0.0
+
+    velocity_pub.publish(speed)
+
+    rate.sleep()
+    print('refermer gripper sur la cible')
+
+    i_target = 0
+    while i_target < 0.8:
+      msg_data_left_finger = -i_target;
+      gripper_left_finger_publisher.publish(msg_data_left_finger)
+      gripper_left_finger_tip_publisher.publish(msg_data_left_finger)
+      gripper_right_finger_publisher.publish(-msg_data_left_finger)
+      gripper_right_finger_tip_publisher.publish(-msg_data_left_finger)
+      rospy.loginfo(msg_data_left_finger)
+      rate.sleep()
+      i_target += 0.1
+
+    i_vel = 0
+    while i_vel < 0.30:
+      speed.linear.x = 0.0
+      speed.angular.z = -i_vel
+
+      velocity_pub.publish(speed)
+
+      rate.sleep()
+      i_vel += 0.01
+
+    #subAvancerVersLaCible = rospy.Subscriber('/the_robot_camera/camera1/image_raw', Image, avancerVersLaCible_callback)
+
+    #subLaser = rospy.Subscriber('/the_robot/laser_scan', LaserScan, clbk_laser)
+
+    #avancerVersLaCible("cas 2")
+
 
 def researchObjectAndCatchWithGripper(msg):
     gripper_left_finger_publisher = rospy.Publisher('/the_robot__palm_left_finger_position_controller/command', Float64, queue_size=10)
@@ -476,6 +685,9 @@ def moveTemp():
     global couleur_bleue_trouvee
     global else_active
     global deploiementDuGripperEnModeChasse
+    
+    global subImage
+    global subLaser
 
     shutdown_var = 0
     couleur_bleue_trouvee = 0
@@ -495,8 +707,8 @@ def moveTemp():
 
 
 
-    if deploiementDuGripperEnModeChasse == 1:
-        deploiementDuGripperEnModeChasse()
+    #if deploiementDuGripperEnModeChasse == 1:
+        #deploiementDuGripperEnModeChasse()
 
 
     """
@@ -601,7 +813,7 @@ def moveTemp():
 
 
 
-    image_topic = "/the_robot_camera/camera1/image_raw"
+    #image_topic = "/the_robot_camera/camera1/image_raw"
     
 
     gripper_topic = "/the_robot__palm_left_finger_position_controller/command"
@@ -610,10 +822,17 @@ def moveTemp():
     #researchObjectAndCatchWithGripper(Image);
     #rospy.Subscriber(image_topic, Image, researchObjectAndCatchWithGripper)
 
-    rospy.Subscriber(image_topic, Image, image_callback)
+    subImage = rospy.Subscriber('/the_robot_camera/camera1/image_raw', Image, image_callback)
 
-    rospy.Subscriber('/the_robot/laser_scan', LaserScan, clbk_laser)
-    
+    subLaser = rospy.Subscriber('/the_robot/laser_scan', LaserScan, clbk_laser)
+
+
+    """
+    if premier_deploiement == 1:
+        subImage.unregister();
+        subLaser.unregister();
+    """
+
     rospy.spin()
 
        

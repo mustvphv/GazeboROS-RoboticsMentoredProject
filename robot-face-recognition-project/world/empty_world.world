@@ -50,6 +50,14 @@
     </include>
 
     <include>
+      <uri>model://character001_face_cube</uri>
+      <name>character001_face_cube4</name>
+      <static>false</static>
+      <pose>15 0 2 0 0 3.14</pose>
+    </include>
+
+
+    <include>
       <uri>model://red_block</uri>
       <static>true</static>
       <pose>15 7 0 0 0 0</pose>

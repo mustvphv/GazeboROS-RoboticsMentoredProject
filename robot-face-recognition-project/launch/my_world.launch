@@ -12,8 +12,8 @@
 IL FAUT ENLEVER L'ESPACE ENTRE LES DEUX TIRETS - - AVANT inorder
 -->
 
-  <arg name="x" default="-7.0"/> <!-- -3.0 -->
-  <arg name="y" default="-7.0"/> <!-- 1.0 -->
+  <arg name="x" default="-7.0"/> <!-- 0.0 10.0 10.0  -7.0 --> <!-- -3.0 -->
+  <arg name="y" default="-7.0"/> <!-- 0.0 .0 -3.0      -7.0 --> <!-- 1.0 -->
   <arg name="z" default="0.0"/>
 
   <include file="$(find gazebo_ros)/launch/empty_world.launch">

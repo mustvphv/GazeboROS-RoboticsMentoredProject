@@ -124,6 +124,39 @@
     </sensor>
   </gazebo>
 
+
+
+<gazebo reference="the_robot__left_finger">
+    <sensor name='my_contact_the_robot__left_finger' type='contact'>
+      <plugin name="my_plugin" filename="libcontact.so"/>
+        <always_on>true</always_on>
+        <contact>
+          <collision>the_robot/the_robot__left_finger/the_robot__left_finger_fixed_joint_lump__left_finger__collision_collision</collision>
+          <topic>__default_topic__</topic>
+        </contact>
+        <update_rate> 5 </update_rate>
+     </sensor>
+  </gazebo>
+
+
+<!-- Contact Sensor -->
+<!--<gazebo reference="the_robot__left_finger">
+    <sensor name="lowerleg_contactsensor_sensor" type="contact">
+      <always_on>true</always_on>
+      <contact>
+        <collision>the_robot__left_finger_fixed_joint_lump__left_finger__collision_collision</collision>
+      </contact>
+      <plugin name="the_robot__left_finger_plugin" filename="libgazebo_ros_bumper.so">
+        <bumperTopicName>the_robot__left_finger_contact</bumperTopicName>
+        <frameName>the_robot__left_finger</frameName>
+      </plugin>
+    </sensor>
+</gazebo>-->
+
+
+
+
+
   <!--<gazebo>
     <plugin name="differential_drive_controller" filename="libgazebo_ros_diff_drive.so">
 
@@ -187,6 +220,8 @@
     </plugin>
 
   </gazebo>
+
+
 
 
   <!--<gazebo>
