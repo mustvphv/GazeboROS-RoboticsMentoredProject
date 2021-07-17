@@ -12,8 +12,8 @@
 IL FAUT ENLEVER L'ESPACE ENTRE LES DEUX TIRETS - - AVANT inorder
 -->
 
-  <arg name="x" default="-7.0"/> <!-- 0.0 10.0 10.0  -7.0 --> <!-- -3.0 -->
-  <arg name="y" default="-7.0"/> <!-- 0.0 .0 -3.0      -7.0 --> <!-- 1.0 -->
+  <arg name="x" default="10.0"/> <!-- -7.0 0.0 10.0 10.0  -7.0 --> <!-- -3.0 -->
+  <arg name="y" default="-3.0"/> <!-- -7.0 0.0 3.0 -3.0      -7.0 --> <!-- 1.0 -->
   <arg name="z" default="0.0"/>
 
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
@@ -26,7 +26,7 @@ IL FAUT ENLEVER L'ESPACE ENTRE LES DEUX TIRETS - - AVANT inorder
 
   <!--<group ns="/the_robot">-->
 
-  <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find robot-face-recognition-project)/the_robot_description/urdf/modelNOUV.xacro'" />
+  <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find robot-face-recognition-project)/the_robot_description/urdf/model.xacro'" />
 
   <!-- <node name="mybot_spawn" pkg="gazebo_ros" type="spawn_model" output="screen" 
     args="-urdf -param robot_description -model m2wr -x $(arg x) -y $(arg y) -z $(arg z)" /> -->

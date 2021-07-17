@@ -421,12 +421,12 @@
         <box size="0.1 0.3 0.1"/>
       </geometry>
     </visual>
-    <sensor name='my_contact_the_robot__left_finger' type='contact'>
+    <!--<sensor name='my_contact_the_robot__left_finger' type='contact'>
       <contact>
         <collision>the_robot__left_finger_collision</collision>
       </contact>
       <update_rate> 5 </update_rate>
-    </sensor>
+    </sensor>-->
   </link>
  
 
